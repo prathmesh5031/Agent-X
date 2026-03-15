@@ -1,0 +1,105 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-plan",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        -48
+      ],
+      "id": "bef789ff-daf0-4dfe-b87b-b2aa44ac5b3b",
+      "name": "Webhook",
+      "webhookId": "03edef7e-448a-45c1-b67b-bee9c7590160"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-8b-instant\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an autonomous execution planning agent. Generate a clean markdown roadmap using headings (##), bullet points (-), spacing between sections, and bold titles. Format output like professional documentation.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Create a clean markdown roadmap for: {{$json.body.goal}}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        -80
+      ],
+      "id": "39dd7e00-e3a0-4275-a5f5-f9e0f014ddb9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{$json.choices[0].message.content}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        432,
+        -16
+      ],
+      "id": "679b5f75-3b6c-428d-9127-8b5ba0833cfd",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5155102b-0122-4d3f-ac7a-755ada2e73d3",
+  "meta": {
+    "instanceId": "c62f13840b97527840482bbeed91d1b08949238ab653bbfc237cbef756f888b9"
+  },
+  "id": "GKqpBCbkzFWGyLzg",
+  "tags": []
+}
